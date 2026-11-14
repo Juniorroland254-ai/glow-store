@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Glow Store ✨</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body{font-family:Arial; margin:0; background:#fff5f8;}
+header{background:#ff6b9d; color:white; padding:20px; text-align:center;}
+.products{display:flex; flex-wrap:wrap; gap:15px; padding:20px; justify-content:center;}
+.card{background:white; border-radius:15px; padding:15px; width:220px; text-align:center; box-shadow:0 3px 10px rgba(0,0,0,0.1);}
+.card h3{margin:5px 0;}
+.price{color:#ff6b9d; font-weight:bold; font-size:18px;}
+button{background:#ff6b9d; color:white; border:none; padding:10px 15px; border-radius:20px; cursor:pointer; margin-top:10px;}
+#chat{position:fixed; bottom:15px; right:15px; width:320px; max-width:90vw; background:white; border-radius:15px; box-shadow:0 5px 20px rgba(0,0,0,0.2); overflow:hidden;}
+#chat-head{background:#ff6b9d; color:white; padding:12px; font-weight:bold;}
+#msgs{height:260px; overflow-y:auto; padding:10px; font-size:14px;}
+.msg-bot{background:#f0f0f0; padding:8px; border-radius:10px; margin-bottom:8px;}
+.msg-you{background:#ff6b9d; color:white; padding:8px; border-radius:10px; margin-bottom:8px; text-align:right;}
+#input-row{display:flex; padding:10px; border-top:1px solid #eee;}
+#input-row input{flex:1; padding:8px; border:1px solid #ddd; border-radius:20px; outline:none;}
+</style>
+</head>
+<body>
+
+<header>
+<h1>✨ Glow Store</h1>
+<p>Beauty Products • Fast Delivery in Lagos</p>
+</header>
+
+<div class="products">
+  <div class="card"><h3>💄 Luxury Perfume</h3><p>Long lasting scent</p><div class="price">N25,000</div><button onclick="ask('How much is perfume?')">Ask AI</button></div>
+  <div class="card"><h3>🧴 Glow Cream</h3><p>For glowing skin</p><div class="price">N15,000</div><button onclick="ask('How much is glow cream?')">Ask AI</button></div>
+  <div class="card"><h3>💇‍♀️ Hair Oil</h3><p>For hair growth</p><div class="price">N8,000</div><button onclick="ask('How much is hair oil?')">Ask AI</button></div>
+  <div class="card"><h3>✨ Face Serum</h3><p>Clear face</p><div class="price">N12,000</div><button onclick="ask('How much is face serum?')">Ask AI</button></div>
+</div>
+
+<div id="chat">
+  <div id="chat-head">✨ Glow Store AI Agent - Online</div>
+  <div id="msgs"><div class="msg-bot">Hello! Welcome to Glow Store ✨ Ask me price, delivery, or type "order perfume" to order.</div></div>
+  <div id="input-row">
+    <input id="inp" placeholder="Ask about price...">
+    <button onclick="send()">Send</button>
+  </div>
+</div>
+
+<script>
+const products = {
+  "perfume": 25000,
+  "glow cream": 15000,
+  "hair oil": 8000,
+  "face serum": 12000
+};
+
+function addMsg(text, who){
+  const box = document.getElementById('msgs');
+  const div = document.createElement('div');
+  div.className = who === 'you' ? 'msg-you' : 'msg-bot';
+  div.innerText = text;
+  box.appendChild(div);
+  box.scrollTop = box.scrollHeight;
+}
+
+function getReply(msg){
+  msg = msg.toLowerCase();
+  if(msg.includes('hello') || msg.includes('hi') || msg.includes('how are')){
+    return "Hello my customer! Welcome to Glow Store ✨ We get Perfume N25,000, Glow Cream N15,000, Hair Oil N8,000, Face Serum N12,000. Which one you want?";
+  }
+  if(msg.includes('perfume')) return "Luxury Perfume na N25,000. E dey last all day, very nice scent. Delivery for Lagos na N2,000. You want order am? Type 'order perfume'";
+  if(msg.includes('glow cream') || msg.includes('cream')) return "Glow Cream na N15,000. E go make your skin glow in 2 weeks. Delivery Lagos N2,000. You want order am?";
+  if(msg.includes('hair oil') || msg.includes('hair')) return "Hair Oil na N8,000. E good for hair growth and dandruff. You want order am?";
+  if(msg.includes('serum') || msg.includes('face')) return "Face Serum na N12,000. E dey clear pimples and dark spots. You want order am?";
+  if(msg.includes('deliver')) return "Delivery na N2,000 for Lagos (1-2 days), N3,500 outside Lagos (2-4 days).";
+  if(msg.includes('order')){
+    let item = "Glow Store Product";
+    if(msg.includes('perfume')) item = "Luxury Perfume N25,000";
+    if(msg.includes('cream')) item = "Glow Cream N15,000";
+    if(msg.includes('hair')) item = "Hair Oil N8,000";
+    if(msg.includes('serum')) item = "Face Serum N12,000";
+    return `Great! You want ${item}. Abeg send your name and location for WhatsApp make we confirm your order. Click the Order button below 👇`;
+  }
+  if(msg.includes('price') || msg.includes('how much') || msg.includes('cost')){
+    return "Our prices: Perfume N25,000, Glow Cream N15,000, Hair Oil N8,000, Face Serum N12,000. Which one you like?";
+  }
+  if(msg.includes('thank')) return "You are welcome! Thank you for shopping with Glow Store ❤️";
+  if(msg.includes('bye')) return "Bye bye! Come again o! Glow Store love you ❤️";
+  return "We get Perfume N25,000, Glow Cream N15,000, Hair Oil N8,000, Face Serum N12,000. Ask me 'How much is perfume?' or 'Delivery?'";
+}
+
+function send(){
+  const inp = document.getElementById('inp');
+  const text = inp.value.trim();
+  if(!text) return;
+  addMsg(text, 'you');
+  inp.value = '';
+  setTimeout(() => { addMsg(getReply(text), 'bot'); }, 500);
+}
+
+function ask(q){
+  document.getElementById('inp').value = q;
+  send();
+}
+
+document.getElementById('inp').addEventListener('keypress', (e) => { if(e.key === 'Enter') send(); });
+</script>
+</body>
+</html>
